@@ -1,0 +1,1013 @@
+<title>Daily Huddle</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: a working app shell. Sticky top bar with tabs (bottom tab bar on phones), one content column up to 1120px, two-column panels that stack when narrow. */
+:root{
+  --bg:#f3f5f9; --surface:#ffffff; --sunk:#eaeef5; --line:#d9dfea; --fg:#141a26; --muted:#5b6476;
+  --accent:#2c4bd4; --accent-ink:#ffffff; --accent-soft:#e5eafc;
+  --leave:#d6463b; --away:#b97a08; --wfh:#0f8577; --busy:#6a4fc9; --done:#23824f;
+  --leave-soft:#fbe7e5; --away-soft:#fbf0dc; --wfh-soft:#dff3ef; --busy-soft:#ece7fa; --done-soft:#e1f2e8;
+  --blackout:#ffffff; --blackout-soft:#2b303c; --downtime:#b3306f; --downtime-soft:#f9e2ee; --patching:#0a6a9e; --patching-soft:#dcedf7;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e121a; --surface:#161b25; --sunk:#1c2230; --line:#2a3142; --fg:#e6e9f0; --muted:#97a0b2;
+  --accent:#7f95ff; --accent-ink:#0e121a; --accent-soft:#222b4b;
+  --leave:#ff7f73; --away:#e8b350; --wfh:#40c4b3; --busy:#a993ff; --done:#5fcb8d;
+  --leave-soft:#3a1f1e; --away-soft:#382c14; --wfh-soft:#14322e; --busy-soft:#2a2346; --done-soft:#17321f;
+  --blackout:#11151d; --blackout-soft:#d3d8e2; --downtime:#f27ab5; --downtime-soft:#3b1c2d; --patching:#5db9ec; --patching-soft:#14303f;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e121a; --surface:#161b25; --sunk:#1c2230; --line:#2a3142; --fg:#e6e9f0; --muted:#97a0b2;
+  --accent:#7f95ff; --accent-ink:#0e121a; --accent-soft:#222b4b;
+  --leave:#ff7f73; --away:#e8b350; --wfh:#40c4b3; --busy:#a993ff; --done:#5fcb8d;
+  --leave-soft:#3a1f1e; --away-soft:#382c14; --wfh-soft:#14322e; --busy-soft:#2a2346; --done-soft:#17321f;
+  --blackout:#11151d; --blackout-soft:#d3d8e2; --downtime:#f27ab5; --downtime-soft:#3b1c2d; --patching:#5db9ec; --patching-soft:#14303f;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.eyebrow{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:500;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.ghost:hover{background:var(--sunk)}
+.btn.danger{color:var(--leave)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.icon-btn{border:0;background:transparent;cursor:pointer;color:var(--muted);border-radius:6px;padding:4px 8px;font-size:16px;line-height:1}
+.icon-btn:hover{background:var(--sunk);color:var(--fg)}
+.field{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 11px;min-width:0;width:100%}
+.field:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+label.lbl{display:grid;gap:4px;font-size:13px;color:var(--muted);font-weight:500}
+
+.av{width:28px;height:28px;border-radius:50%;object-fit:cover;flex:none;background:var(--sunk)}
+.av.lg{width:44px;height:44px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.t-leave{background:var(--leave-soft);color:var(--leave)}
+.t-away{background:var(--away-soft);color:var(--away)}
+.t-wfh{background:var(--wfh-soft);color:var(--wfh)}
+.t-busy{background:var(--busy-soft);color:var(--busy)}
+.t-blackout{background:var(--blackout-soft);color:var(--blackout)}
+.motd{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:12px;background:var(--accent-soft);border:1px solid var(--line);margin-bottom:18px}
+.motd.is-new{border-color:var(--accent);animation:motdPulse 1.4s ease-out 2}
+@keyframes motdPulse{0%{box-shadow:0 0 0 0 var(--accent)}100%{box-shadow:0 0 0 10px transparent}}
+.motd-top{display:flex;align-items:center;gap:8px}
+.new-chip{background:var(--accent);color:var(--accent-ink);font-size:11px;padding:1px 7px}
+.motd-actions{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.motd-actions .btn{padding:6px 10px;font-size:13.5px}
+.motd-list{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:10px}
+.motd-list li{display:grid;gap:1px;padding-left:12px;border-left:3px solid var(--line)}
+.motd-list li.empty-li{border-left:0;padding-left:0}
+.motd-list li.is-new-item{border-left-color:var(--accent)}
+.motd-list p{font-size:17px;margin:0}
+.motd-inputs{display:grid;gap:10px;width:100%}
+.motd-inputs textarea{min-height:52px}
+.motd-body{flex:1;min-width:0}
+.motd p{margin:4px 0 2px;font-family:var(--f-display);font-size:19px;font-weight:600;line-height:1.3;white-space:pre-wrap;overflow-wrap:anywhere}
+.motd p.placeholder{font-family:var(--f-body);font-size:14.5px;font-weight:400;color:var(--muted)}
+.motd small{color:var(--muted);font-size:12.5px}
+.motd-form{flex-direction:column;align-items:stretch}
+.motd-form textarea{resize:vertical;min-height:72px}
+.t-patching{background:var(--patching-soft);color:var(--patching)}
+.t-downtime{background:var(--downtime-soft);color:var(--downtime);outline:1px dashed var(--downtime);outline-offset:-1px}
+
+/* ---------- Sign-in ---------- */
+.login{min-height:100%;display:grid;place-items:center;padding-block:48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.login-card{width:100%;max-width:440px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:32px 28px;display:grid;gap:22px}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;flex:none}
+.mark svg{width:20px;height:20px}
+.brand h1{font-size:24px}
+.login-card h2{font-size:26px;line-height:1.15}
+.seats{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.seat{width:36px;height:36px;border-radius:50%;border:1.5px dashed var(--line);display:grid;place-items:center;overflow:hidden}
+.seat img{width:100%;height:100%;object-fit:cover}
+.seat.on{border:2px solid var(--surface);box-shadow:0 0 0 1.5px var(--accent)}
+.who{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:var(--sunk)}
+.who b{display:block}
+.note{font-size:13px;color:var(--muted);margin:0}
+.login-actions{display:grid;gap:10px}
+
+/* ---------- App shell ---------- */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{max-width:1120px;margin:0 auto;display:flex;align-items:center;gap:16px;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top .brand h1{font-size:19px}
+.top .mark{width:28px;height:28px;border-radius:8px}
+.top .mark svg{width:16px;height:16px}
+.tabs{display:flex;gap:2px;margin-left:12px}
+.tab{position:relative;border:0;background:transparent;padding:8px 12px;border-radius:8px;cursor:pointer;color:var(--muted);font-weight:500}
+.tab:hover{color:var(--fg);background:var(--sunk)}
+.tab[aria-current="true"]{color:var(--fg);background:var(--accent-soft)}
+.badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--leave);color:#fff;font-size:11px;font-weight:600;margin-left:4px;font-family:var(--f-mono)}
+.me{margin-left:auto;display:flex;align-items:center;gap:8px;min-width:0}
+.me span{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
+.bottom{display:none}
+main{max-width:1120px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.banner{max-width:1120px;margin:16px auto 0;padding:10px 14px;border-radius:8px;background:var(--away-soft);color:var(--fg);font-size:14px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.page-head h2{font-size:28px;line-height:1.1}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;min-width:0}
+.panel h3{font-size:17px;margin-bottom:12px}
+.cols{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:start}
+.empty{padding:18px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:14px;text-align:center}
+
+/* Today */
+.daynav{display:flex;align-items:center;gap:6px}
+.daynav .mono{min-width:128px;text-align:center;font-size:14px}
+.away-strip{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px;font-size:14px}
+.add-row{display:flex;gap:8px;margin-bottom:12px}
+.tasks{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.task{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:8px 8px 8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.task .ttl{overflow-wrap:anywhere}
+.task.s-done .ttl{text-decoration:line-through;color:var(--muted)}
+.task small{display:block;font-size:12px;color:var(--away)}
+.status{border:0;cursor:pointer;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;width:92px;text-align:center}
+.status.s-todo{background:var(--sunk);color:var(--muted)}
+.status.s-doing{background:var(--accent-soft);color:var(--accent)}
+.status.s-done{background:var(--done-soft);color:var(--done)}
+.progress{height:6px;border-radius:99px;background:var(--sunk);overflow:hidden}
+.progress i{display:block;height:100%;background:var(--done);border-radius:99px}
+.mates{display:grid;gap:14px}
+.mate{display:grid;gap:8px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.mate:last-child{border-bottom:0;padding-bottom:0}
+.mate-head{display:flex;align-items:center;gap:10px}
+.mate-head .nm{font-weight:600;line-height:1.2}
+.mate-head .nm small{display:block;font-weight:400;color:var(--muted);font-size:12.5px}
+.mate-head .cnt{margin-left:auto;font-size:13px;color:var(--muted)}
+.mini{list-style:none;margin:0;padding:0 0 0 38px;display:grid;gap:3px;font-size:13.5px}
+.mini li{display:flex;gap:8px;align-items:baseline}
+.dot{width:8px;height:8px;border-radius:50%;flex:none;transform:translateY(-1px)}
+.dot.s-todo{background:var(--line)} .dot.s-doing{background:var(--accent)} .dot.s-done{background:var(--done)}
+.mini .s-done-t{color:var(--muted);text-decoration:line-through}
+
+/* Calendar */
+.cal-wrap{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start}
+.cal-head{display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.cal-head h3{margin:0 auto 0 0;font-size:18px}
+.grid7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.dow{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;padding:0 4px 4px}
+.cell{min-height:92px;border:1px solid var(--line);border-radius:8px;padding:5px;display:flex;flex-direction:column;gap:3px;cursor:pointer;background:var(--surface);text-align:left;min-width:0}
+.cell:hover{border-color:var(--muted)}
+.cell.out{background:var(--bg);color:var(--muted)}
+.cell.today .dn{background:var(--accent);color:var(--accent-ink)}
+.cell.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.cell.wkend{background:var(--sunk)}
+.dn{font-family:var(--f-mono);font-size:12px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center}
+.bar{font-size:11px;font-weight:600;border-radius:4px;padding:1px 5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.more{font-size:11px;color:var(--muted)}
+.side{display:grid;gap:18px}
+.form-grid{display:grid;gap:10px}
+.form-grid .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.entries{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.entry{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;padding:10px;border:1px solid var(--line);border-radius:8px}
+.entry .nm{font-weight:600}
+.entry p{margin:2px 0 0;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.legend{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+
+/* Chat */
+.chat{display:grid;grid-template-columns:260px minmax(0,1fr);border:1px solid var(--line);border-radius:12px;background:var(--surface);height:min(640px,calc(100dvh - 210px));min-height:420px;overflow:hidden}
+.chat.solo{grid-template-columns:minmax(0,1fr)}
+.threads{border-right:1px solid var(--line);overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:2px}
+.thread{display:flex;gap:10px;align-items:center;border:0;background:transparent;text-align:left;padding:10px;border-radius:8px;cursor:pointer;width:100%;min-width:0}
+.thread:hover{background:var(--sunk)}
+.thread[aria-current="true"]{background:var(--accent-soft)}
+.thread .tx{min-width:0;flex:1}
+.thread .tx b{display:block;font-weight:600}
+.thread .tx span{display:block;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv{display:flex;flex-direction:column;min-width:0;min-height:0}
+.conv-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.conv-head b{display:block;line-height:1.2}
+.conv-head small{color:var(--muted)}
+.msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:6px;min-height:0}
+.msg{max-width:min(78%,520px);padding:8px 12px;border-radius:14px;background:var(--sunk);align-self:flex-start;overflow-wrap:anywhere;white-space:pre-wrap}
+.msg.mine{align-self:flex-end;background:var(--accent);color:var(--accent-ink)}
+.msg time{display:block;font-size:11px;opacity:.7;margin-top:2px;font-family:var(--f-mono)}
+.daysep{align-self:center;font-size:11.5px;color:var(--muted);margin:8px 0 2px;font-family:var(--f-mono)}
+.composer{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+.composer textarea{resize:none;height:42px;max-height:120px}
+.back{display:none}
+
+/* Team */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--surface);display:grid;gap:10px;align-content:start}
+.card .row{display:flex;align-items:center;gap:12px}
+.card .row b{display:block;font-size:16px;line-height:1.25}
+.lead-tag{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.kv{display:flex;justify-content:space-between;font-size:13.5px;gap:8px}
+.kv span:first-child{color:var(--muted)}
+.card.open{border-style:dashed;place-items:center;text-align:center;color:var(--muted);min-height:140px}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}
+
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;z-index:20;max-width:calc(100% - 32px);box-shadow:0 6px 24px rgba(0,0,0,.2)}
+
+@media (max-width:860px){
+  .cols,.cal-wrap{grid-template-columns:minmax(0,1fr)}
+  .tabs{display:none}
+  .bottom{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));justify-content:space-around}
+  .bottom .tab{flex:1;font-size:13px;padding:8px 4px}
+  main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  #toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  .chat{grid-template-columns:minmax(0,1fr);height:calc(100dvh - 230px)}
+  .chat.has-thread .threads{display:none}
+  .chat:not(.has-thread):not(.solo) .conv{display:none}
+  .threads{border-right:0}
+  .back{display:inline-block}
+  .me span{display:none}
+}
+@media (max-width:520px){
+  .cell{min-height:58px;padding:3px}
+  .bar{font-size:0;height:6px;padding:0}
+  .page-head h2{font-size:23px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<!-- ============ SIGN-IN ============ -->
+<section id="login" class="login" aria-label="Sign in">
+  <div class="login-card">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none"><circle cx="6" cy="7" r="2.6" fill="#fff"/><circle cx="14" cy="7" r="2.6" fill="#fff" opacity=".75"/><path d="M2.5 15.5c.6-2.4 2-3.6 3.5-3.6s2.9 1.2 3.5 3.6M10.5 15.5c.6-2.4 2-3.6 3.5-3.6s2.9 1.2 3.5 3.6" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+      <h1>Daily Huddle</h1>
+    </div>
+    <div>
+      <h2 id="login-title">Sign in to your team</h2>
+      <p class="note" style="margin-top:6px">Tasks, schedules and messages for a team of up to ten, kept in sync for everyone.</p>
+    </div>
+    <div>
+      <div class="eyebrow" style="margin-bottom:8px">Team seats · <span id="seat-count" class="mono">0 / 10</span></div>
+      <div class="seats" id="seats"></div>
+    </div>
+    <div id="login-body" class="login-actions"><p class="note">Connecting to your team…</p></div>
+  </div>
+</section>
+
+<!-- ============ APP ============ -->
+<div id="app" hidden>
+  <header class="top">
+    <div class="top-in">
+      <div class="brand">
+        <div class="mark" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none"><circle cx="6" cy="7" r="2.6" fill="#fff"/><circle cx="14" cy="7" r="2.6" fill="#fff" opacity=".75"/><path d="M2.5 15.5c.6-2.4 2-3.6 3.5-3.6s2.9 1.2 3.5 3.6M10.5 15.5c.6-2.4 2-3.6 3.5-3.6s2.9 1.2 3.5 3.6" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+        <h1>Daily Huddle</h1>
+      </div>
+      <nav class="tabs" aria-label="Sections">
+        <button class="tab" data-tab="today">Today<span class="badge motd-badge" hidden>New</span></button>
+        <button class="tab" data-tab="calendar">Calendar</button>
+        <button class="tab" data-tab="chat">Chat<span class="badge chat-badge" hidden></span></button>
+        <button class="tab" data-tab="team">Team</button>
+      </nav>
+      <div class="me">
+        <img class="av" id="me-av" alt="">
+        <span id="me-name"></span>
+        <button class="btn ghost" id="signout">Sign out</button>
+      </div>
+    </div>
+  </header>
+  <div id="banner" class="banner" hidden></div>
+
+  <main>
+    <!-- TODAY -->
+    <section id="tab-today" data-panel="today">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow" id="today-eyebrow">Daily tasks</div>
+          <h2 id="today-title">Today</h2>
+        </div>
+        <div class="daynav">
+          <button class="icon-btn" id="day-prev" aria-label="Previous day">‹</button>
+          <span class="mono" id="day-label"></span>
+          <button class="icon-btn" id="day-next" aria-label="Next day">›</button>
+          <button class="btn" id="day-today">Today</button>
+        </div>
+      </div>
+      <div class="motd" id="motd" hidden>
+        <div class="motd-body">
+          <div class="motd-top"><span class="eyebrow">Message of the day</span><span class="chip new-chip" id="motd-new" hidden>New</span></div>
+          <ol class="motd-list" id="motd-list"></ol>
+        </div>
+        <div class="motd-actions"><button class="btn ghost" id="motd-sound" type="button"></button><button class="btn ghost" id="motd-edit" type="button" hidden>Edit</button></div>
+      </div>
+      <form class="motd motd-form" id="motd-form" hidden autocomplete="off">
+        <div class="motd-inputs">
+          <div class="eyebrow">Messages of the day · up to 5</div>
+          <label class="lbl" for="motd-in-0">Message 1<textarea class="field" id="motd-in-0" maxlength="300" rows="2" placeholder="e.g. Sprint demo at 3pm today."></textarea></label>
+          <label class="lbl" for="motd-in-1">Message 2 (optional)<textarea class="field" id="motd-in-1" maxlength="300" rows="2"></textarea></label>
+          <label class="lbl" for="motd-in-2">Message 3 (optional)<textarea class="field" id="motd-in-2" maxlength="300" rows="2"></textarea></label>
+          <label class="lbl" for="motd-in-3">Message 4 (optional)<textarea class="field" id="motd-in-3" maxlength="300" rows="2"></textarea></label>
+          <label class="lbl" for="motd-in-4">Message 5 (optional)<textarea class="field" id="motd-in-4" maxlength="300" rows="2"></textarea></label>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn primary" type="submit">Post messages</button>
+          <button class="btn ghost" type="button" id="motd-cancel">Cancel</button>
+          <button class="btn ghost danger" type="button" id="motd-clear">Remove all</button>
+        </div>
+      </form>
+      <div class="away-strip" id="away-strip"></div>
+      <div class="cols">
+        <div class="panel">
+          <h3>My tasks</h3>
+          <form class="add-row" id="task-form" autocomplete="off">
+            <input class="field" id="task-input" maxlength="200" placeholder="Add a task, then press Enter">
+            <button class="btn primary" type="submit">Add</button>
+          </form>
+          <ul class="tasks" id="my-tasks"></ul>
+        </div>
+        <div class="panel">
+          <h3>Team progress</h3>
+          <div class="mates" id="team-today"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALENDAR -->
+    <section id="tab-calendar" data-panel="calendar" hidden>
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Team calendar</div>
+          <h2>Who's in, who's away</h2>
+        </div>
+      </div>
+      <div class="cal-wrap">
+        <div class="panel">
+          <div class="cal-head">
+            <h3 id="cal-title"></h3>
+            <button class="icon-btn" id="cal-prev" aria-label="Previous month">‹</button>
+            <button class="btn" id="cal-now">This month</button>
+            <button class="icon-btn" id="cal-next" aria-label="Next month">›</button>
+          </div>
+          <div class="grid7" id="cal-grid"></div>
+          <div class="legend">
+            <span class="chip t-leave">On leave</span><span class="chip t-away">Out of office</span><span class="chip t-wfh">Remote</span><span class="chip t-busy">Busy</span><span class="chip t-blackout">Blackout period</span><span class="chip t-downtime">Proposed downtime</span><span class="chip t-patching">Patching</span>
+          </div>
+        </div>
+        <div class="side">
+          <div class="panel">
+            <h3 id="day-detail-title">Day</h3>
+            <ul class="entries" id="day-entries"></ul>
+          </div>
+          <div class="panel">
+            <h3>Add to my schedule</h3>
+            <form class="form-grid" id="cal-form" autocomplete="off">
+              <label class="lbl" for="cal-type">Type
+                <select class="field" id="cal-type">
+                  <option value="leave">On leave</option>
+                  <option value="away">Out of office</option>
+                  <option value="wfh">Working remotely</option>
+                  <option value="busy">Busy / meetings</option>
+                  <option value="blackout">Blackout period</option>
+                  <option value="downtime">Propose downtime</option>
+                  <option value="patching">Patching</option>
+                </select>
+              </label>
+              <div class="two">
+                <label class="lbl" for="cal-from">From<input class="field" type="date" id="cal-from" required></label>
+                <label class="lbl" for="cal-to">To<input class="field" type="date" id="cal-to" required></label>
+              </div>
+              <label class="lbl" for="cal-note">Note (optional)<input class="field" id="cal-note" maxlength="140" placeholder="e.g. Annual leave, client visit"></label>
+              <button class="btn primary" type="submit">Add to calendar</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAT -->
+    <section id="tab-chat" data-panel="chat" hidden>
+      <div class="page-head">
+        <div>
+          <div class="eyebrow" id="chat-eyebrow">Messages</div>
+          <h2 id="chat-title">Chat with your team leader</h2>
+        </div>
+      </div>
+      <div class="chat" id="chat">
+        <div class="threads" id="threads"></div>
+        <div class="conv">
+          <div class="conv-head" id="conv-head"></div>
+          <div class="msgs" id="msgs"></div>
+          <form class="composer" id="composer" autocomplete="off">
+            <textarea class="field" id="msg-input" maxlength="2000" placeholder="Write a message"></textarea>
+            <button class="btn primary" type="submit">Send</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEAM -->
+    <section id="tab-team" data-panel="team" hidden>
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Team · <span class="mono" id="team-seats"></span></div>
+          <h2>Your team</h2>
+        </div>
+      </div>
+      <div class="team-grid" id="team-grid"></div>
+      <div class="panel" style="margin-top:18px;max-width:520px">
+        <h3>My profile</h3>
+        <form class="add-row" id="title-form" autocomplete="off" style="margin:0">
+          <input class="field" id="title-input" maxlength="60" placeholder="Your role, e.g. Designer">
+          <button class="btn" type="submit">Save</button>
+        </form>
+        <p class="note" style="margin-top:8px">Your name and photo come from your Claude account.</p>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom" aria-label="Sections">
+    <button class="tab" data-tab="today">Today<span class="badge motd-badge" hidden>New</span></button>
+    <button class="tab" data-tab="calendar">Calendar</button>
+    <button class="tab" data-tab="chat">Chat<span class="badge chat-badge" hidden></span></button>
+    <button class="tab" data-tab="team">Team</button>
+  </nav>
+</div>
+<div id="toast" hidden role="status"></div>
+
+<script>
+(() => {
+const MAX_SEATS = 10;
+const TYPES = {leave:"On leave", away:"Out of office", wfh:"Remote", busy:"Busy", blackout:"Blackout period", downtime:"Proposed downtime", patching:"Patching"};
+const STATUS = {todo:"To do", doing:"In progress", done:"Done"};
+const NEXT = {todo:"doing", doing:"done", done:"todo"};
+
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+function h(tag, props, ...kids) {
+  const el = document.createElement(tag);
+  if (props) for (const [k, v] of Object.entries(props)) {
+    if (v == null || v === false) continue;
+    if (k === "class") el.className = v;
+    else if (k === "text") el.textContent = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat()) { if (c == null || c === false) continue; el.append(c.nodeType ? c : document.createTextNode(String(c))); }
+  return el;
+}
+const pad = n => String(n).padStart(2, "0");
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parseD = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const addDays = (s, n) => { const d = parseD(s); d.setDate(d.getDate() + n); return ymd(d); };
+const todayStr = () => ymd(new Date());
+const fmtDay = s => parseD(s).toLocaleDateString(undefined, {weekday:"short", day:"numeric", month:"short"});
+const fmtLong = s => parseD(s).toLocaleDateString(undefined, {weekday:"long", day:"numeric", month:"long"});
+const fmtTime = ts => new Date(ts).toLocaleTimeString(undefined, {hour:"numeric", minute:"2-digit"});
+const uid6 = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} }
+};
+let toastT;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 4200); }
+function errMsg(e) {
+  switch (e && e.code) {
+    case "invalid_argument": return "This change wasn't saved: your access is view-only. Ask the team leader to share Daily Huddle with you as a Contributor.";
+    case "quota_exceeded": return "Team storage is full. Delete old calendar entries or tasks, then try again.";
+    case "resource_exhausted": return "Too many changes at once. Wait a moment and try again.";
+    default: return "Couldn't reach the server. Check your connection and try again.";
+  }
+}
+const queues = {};
+function enqueue(key, fn) {
+  const p = (queues[key] || Promise.resolve()).catch(() => {}).then(fn);
+  queues[key] = p.catch(() => {});
+  return p.catch(e => { toast(errMsg(e)); throw e; });
+}
+
+/* ---------- state ---------- */
+const S = {
+  db: null, user: null, uid: null, me: null, isOwner: false,
+  members: {}, membersLoaded: false, leaderId: null,
+  tasks: {}, cal: {}, chats: {}, chatUnsubs: {}, readState: {},
+  profiles: {}, signedIn: false,
+  tab: "today", date: todayStr(), calMonth: todayStr().slice(0, 7), calSel: todayStr(), chatWith: null,
+};
+const isLeader = () => S.uid && S.uid === S.leaderId;
+const memberIds = () => Object.keys(S.members).sort((a, b) => (a === S.leaderId ? -1 : b === S.leaderId ? 1 : (S.members[a].joinedAt || 0) - (S.members[b].joinedAt || 0)));
+const prof = id => S.profiles[id] || {name:"", avatarUrl:"", color:"var(--muted)"};
+const nameOf = id => prof(id).name || (id === S.uid ? "You" : "Teammate");
+const first = id => nameOf(id).split(" ")[0];
+const avatar = (id, cls = "av") => h("img", {class: cls, src: prof(id).avatarUrl || null, alt: ""});
+
+/* ---------- render scheduling ---------- */
+let pending = false;
+function render() {
+  if (pending) return; pending = true;
+  requestAnimationFrame(async () => {
+    pending = false;
+    if (S.user) {
+      const ids = [...new Set([...Object.keys(S.members), S.uid, S.leaderId].filter(Boolean))];
+      try { S.profiles = await S.user.profiles(ids); } catch {}
+    }
+    if (!S.signedIn) { renderLogin(); return; }
+    renderShell(); renderToday(); renderCalendar(); renderChat(); renderTeam();
+  });
+}
+
+/* ---------- sign-in ---------- */
+function renderSeats() {
+  const ids = memberIds();
+  $("#seat-count").textContent = `${ids.length} / ${MAX_SEATS}`;
+  const seats = $("#seats"); seats.replaceChildren();
+  for (let i = 0; i < MAX_SEATS; i++) {
+    const id = ids[i];
+    seats.append(id ? h("div", {class: "seat on", title: nameOf(id)}, avatar(id, "")) : h("div", {class: "seat", "aria-label": "Open seat"}));
+  }
+}
+function renderLogin() {
+  $("#login").hidden = false; $("#app").hidden = true;
+  renderSeats();
+  const body = $("#login-body"); body.replaceChildren();
+  if (!S.db || !S.uid) {
+    $("#login-title").textContent = "Sign in to your team";
+    body.append(h("p", {class: "note", text: S.booted
+      ? "Daily Huddle needs your Claude account to know who you are. Open this page in Claude while signed in, using the link your team leader shared."
+      : "Connecting to your team…"}));
+    return;
+  }
+  if (!S.membersLoaded) { body.append(h("p", {class: "note", text: "Loading your team…"})); return; }
+  const mine = S.members[S.uid];
+  const meCard = h("div", {class: "who"}, h("img", {class: "av lg", src: S.me.avatarUrl, alt: ""}),
+    h("div", null, h("b", {text: S.me.name || "Your Claude account"}), h("span", {class: "muted", text: mine ? (mine.title || "Team member") + (isLeader() ? " · Team leader" : "") : "Not on this team yet"})));
+  if (mine) {
+    $("#login-title").textContent = `Welcome back${S.me.name ? ", " + S.me.name.split(" ")[0] : ""}`;
+    body.append(meCard, h("button", {class: "btn primary", onclick: enter, text: "Sign in"}));
+    return;
+  }
+  const full = memberIds().length >= MAX_SEATS && !S.isOwner;
+  $("#login-title").textContent = S.isOwner && !S.leaderId ? "Set up your team" : "Join your team";
+  if (full) {
+    body.append(meCard, h("p", {class: "note", text: "All ten seats are taken. Ask the team leader to free a seat from the Team page."}));
+    return;
+  }
+  const input = h("input", {class: "field", id: "join-title", maxlength: "60", placeholder: S.isOwner ? "e.g. Team leader" : "e.g. Designer, Sales, Engineer"});
+  const btn = h("button", {class: "btn primary", type: "submit", text: S.isOwner && !S.leaderId ? "Create team as leader" : "Join the team"});
+  const form = h("form", {class: "login-actions", onsubmit: e => { e.preventDefault(); join(input.value.trim(), btn); }},
+    meCard, h("label", {class: "lbl", for: "join-title"}, "Your role", input), btn);
+  body.append(form);
+  if (S.isOwner && !S.leaderId) body.append(h("p", {class: "note", text: "You own this app, so you'll be the team leader. Teammates can join once you share it with them."}));
+  else if (!S.leaderId) body.append(h("p", {class: "note", text: "Your team leader hasn't set up the team yet. You can join now; chat opens once they sign in."}));
+}
+async function join(title, btn) {
+  btn.disabled = true;
+  try {
+    await S.db.doc(`members/${S.uid}`).set({title: title || (S.isOwner ? "Team leader" : "Team member"), joinedAt: Date.now()});
+    if (S.isOwner && !S.leaderId) await S.db.doc("config/team").set({leaderId: S.uid, createdAt: Date.now()});
+    enter();
+  } catch (e) { toast(errMsg(e)); btn.disabled = false; }
+}
+function enter() {
+  S.signedIn = true; store.set("huddle.signedIn", S.uid);
+  const hash = location.hash.slice(1);
+  if (["today", "calendar", "chat", "team"].includes(hash)) S.tab = hash;
+  render();
+}
+$("#signout").addEventListener("click", () => { S.signedIn = false; store.set("huddle.signedIn", null); render(); });
+
+/* ---------- shell ---------- */
+function renderShell() {
+  $("#login").hidden = true; $("#app").hidden = false;
+  $("#me-av").src = S.me.avatarUrl; $("#me-name").textContent = S.me.name || "You";
+  $$(".tab").forEach(b => b.setAttribute("aria-current", String(b.dataset.tab === S.tab)));
+  $$("[data-panel]").forEach(p => p.hidden = p.dataset.panel !== S.tab);
+  const unread = unreadTotal();
+  $$(".chat-badge").forEach(b => { b.hidden = !unread; b.textContent = unread; });
+  const banner = $("#banner");
+  if (!S.members[S.uid]) { banner.hidden = false; banner.textContent = "You've been removed from this team. Sign out and join again if a seat is free."; }
+  else if (S.readOnly) { banner.hidden = false; banner.textContent = "You have view-only access, so your changes can't be saved. Ask the team leader to share Daily Huddle with you as a Contributor."; }
+  else banner.hidden = true;
+}
+$$(".tab").forEach(b => b.addEventListener("click", () => { S.tab = b.dataset.tab; render(); window.scrollTo(0, 0); }));
+
+/* ---------- tasks ---------- */
+function tasksFor(id, date) {
+  const items = S.tasks[id] || {};
+  const list = Object.entries(items).map(([k, v]) => ({id: k, ...v}));
+  const onDay = list.filter(t => t.d === date);
+  const carried = date === todayStr() ? list.filter(t => t.d < date && t.s !== "done") : [];
+  const order = {doing: 0, todo: 1, done: 2};
+  return [...carried, ...onDay].sort((a, b) => order[a.s] - order[b.s] || a.c - b.c);
+}
+function saveMyTasks(items) {
+  const cutoff = addDays(todayStr(), -45);
+  for (const [k, t] of Object.entries(items)) if (t.s === "done" && t.d < cutoff) delete items[k];
+  S.tasks[S.uid] = items; render();
+  return enqueue("tasks", () => S.db.doc(`tasks/${S.uid}`).set({items, updatedAt: Date.now()}));
+}
+const myItems = () => structuredClone(S.tasks[S.uid] || {});
+$("#task-form").addEventListener("submit", e => {
+  e.preventDefault();
+  const inp = $("#task-input"), t = inp.value.trim(); if (!t) return;
+  const items = myItems(); items[uid6()] = {t, s: "todo", d: S.date, c: Date.now()};
+  inp.value = ""; saveMyTasks(items).catch(() => {});
+});
+$("#day-prev").onclick = () => { S.date = addDays(S.date, -1); render(); };
+$("#day-next").onclick = () => { S.date = addDays(S.date, 1); render(); };
+$("#day-today").onclick = () => { S.date = todayStr(); render(); };
+
+function awayOn(date) {
+  const out = [];
+  for (const id of memberIds()) for (const e of Object.values(S.cal[id] || {})) if (e.from <= date && date <= e.to) out.push({id, ...e});
+  return out;
+}
+function renderToday() {
+  const isToday = S.date === todayStr();
+  $("#today-title").textContent = isToday ? "Today" : fmtLong(S.date);
+  $("#today-eyebrow").textContent = isToday ? fmtLong(S.date) : "Daily tasks";
+  $("#day-label").textContent = fmtDay(S.date);
+  renderMotd();
+
+  const strip = $("#away-strip"); strip.replaceChildren();
+  const away = awayOn(S.date);
+  if (away.length) {
+    strip.append(h("span", {class: "eyebrow", text: "Schedule"}));
+    away.forEach(a => strip.append(h("span", {class: `chip t-${a.type}`, title: a.note || ""}, `${first(a.id)} · ${TYPES[a.type]}`)));
+  } else strip.append(h("span", {class: "muted", text: "Everyone is in on this day."}));
+
+  const ul = $("#my-tasks"); ul.replaceChildren();
+  const mine = tasksFor(S.uid, S.date);
+  if (!mine.length) ul.append(h("li", {class: "empty", text: isToday ? "No tasks yet. Add what you're working on today." : "No tasks on this day."}));
+  for (const t of mine) {
+    ul.append(h("li", {class: `task s-${t.s}`},
+      h("button", {class: `status s-${t.s}`, title: "Change status", text: STATUS[t.s], onclick: () => {
+        const items = myItems(); if (!items[t.id]) return; items[t.id].s = NEXT[t.s]; saveMyTasks(items).catch(() => {});
+      }}),
+      h("div", {class: "ttl"}, t.t, t.d !== S.date ? h("small", {text: `Carried over from ${fmtDay(t.d)}`}) : null),
+      h("button", {class: "icon-btn", "aria-label": "Delete task", title: "Delete", text: "×", onclick: () => {
+        const items = myItems(); delete items[t.id]; saveMyTasks(items).catch(() => {});
+      }})));
+  }
+
+  const box = $("#team-today"); box.replaceChildren();
+  const ids = memberIds();
+  if (ids.length <= 1) box.append(h("div", {class: "empty", text: "Teammates' progress shows here once they join."}));
+  for (const id of ids) {
+    const list = tasksFor(id, S.date);
+    const done = list.filter(t => t.s === "done").length;
+    const a = awayOn(S.date).find(x => x.id === id);
+    box.append(h("div", {class: "mate"},
+      h("div", {class: "mate-head"}, avatar(id),
+        h("div", {class: "nm"}, id === S.uid ? `${nameOf(id)} (you)` : nameOf(id), h("small", {text: (S.members[id].title || "") + (id === S.leaderId ? " · Leader" : "")})),
+        a ? h("span", {class: `chip t-${a.type}`, text: TYPES[a.type]}) : null,
+        h("span", {class: "cnt mono", text: `${done}/${list.length}`})),
+      list.length ? h("div", {class: "progress", style: "margin-left:38px"}, h("i", {style: `width:${Math.round(done / list.length * 100)}%`})) : null,
+      list.length ? h("ul", {class: "mini"}, list.slice(0, 6).map(t => h("li", null, h("span", {class: `dot s-${t.s}`}), h("span", {class: t.s === "done" ? "s-done-t" : "", text: t.t}))),
+        list.length > 6 ? h("li", {class: "muted", text: `+${list.length - 6} more`}) : null)
+        : h("div", {class: "mini muted", text: "No tasks posted."})));
+  }
+}
+// width styles above go through setAttribute("style") — fine for computed numbers only.
+
+/* ---------- message-of-the-day alert ---------- */
+const baseTitle = document.title;
+const memLS = {};
+const lsGet = k => { try { return localStorage.getItem(k); } catch { return memLS[k] ?? null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch { memLS[k] = v; } };
+const soundOn = () => lsGet("huddle.sound") !== "off";
+let audioCtx = null, pendingChime = false, motdClearT = null;
+function unlockAudio() {
+  try {
+    if (!audioCtx) { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; audioCtx = new AC(); }
+    const go = () => { if (pendingChime && audioCtx.state === "running") { pendingChime = false; playChime(); } };
+    if (audioCtx.state === "suspended") audioCtx.resume().then(go, () => {}); else go();
+  } catch {}
+}
+["pointerdown", "keydown", "touchstart"].forEach(ev => document.addEventListener(ev, unlockAudio, {capture: true, passive: true}));
+// A soft three-note chime, generated in the browser (no sound file needed).
+function playChime() {
+  if (!soundOn()) return;
+  if (!audioCtx || audioCtx.state !== "running") { pendingChime = true; return; } // browsers only allow sound after a click or key press
+  const t0 = audioCtx.currentTime + 0.02;
+  [[880, 0], [1174.66, 0.15], [1567.98, 0.3]].forEach(([f, dt]) => {
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = "sine"; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t0 + dt);
+    g.gain.exponentialRampToValueAtTime(0.22, t0 + dt + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dt + 0.7);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(t0 + dt); o.stop(t0 + dt + 0.75);
+  });
+}
+function checkMotd() {
+  const items = motdItems();
+  if (!S.uid || !items.length) return;
+  const latest = items.reduce((a, b) => ((b.at || 0) > (a.at || 0) ? b : a));
+  if (latest.by === S.uid) return;
+  const key = "huddle.motdSeen." + S.uid;
+  const seen = Number(lsGet(key) || 0);
+  if ((latest.at || 0) > seen) {
+    S.motdPrevSeen = seen;
+    lsSet(key, String(latest.at));
+    S.motdNew = true;
+    if (motdClearT) { clearTimeout(motdClearT); motdClearT = null; }
+    playChime();
+    toast(`New message of the day from ${first(latest.by)}`);
+  }
+}
+function renderMotdAlert() {
+  checkMotd();
+  const viewing = S.tab === "today" && document.visibilityState === "visible";
+  if (S.motdNew && viewing && !motdClearT) motdClearT = setTimeout(() => { S.motdNew = false; motdClearT = null; render(); }, 12000);
+  $("#motd").classList.toggle("is-new", !!S.motdNew);
+  $("#motd-new").hidden = !S.motdNew;
+  $$(".motd-badge").forEach(b => b.hidden = !S.motdNew || S.tab === "today");
+  const sb = $("#motd-sound");
+  sb.textContent = soundOn() ? "Sound on" : "Sound off";
+  sb.setAttribute("aria-pressed", String(soundOn()));
+  sb.title = soundOn() ? "A chime plays when a new message of the day is posted. Click to mute." : "Click to play a chime for new messages of the day.";
+  document.title = S.motdNew && document.visibilityState !== "visible" ? "New message · " + baseTitle : baseTitle;
+}
+$("#motd-sound").addEventListener("click", () => {
+  const on = !soundOn();
+  lsSet("huddle.sound", on ? "on" : "off");
+  if (on) { unlockAudio(); setTimeout(playChime, 150); toast("Sound on. You'll hear this chime when the leader posts a new message."); }
+  else toast("Sound off for new messages of the day.");
+  render();
+});
+
+/* ---------- message of the day ---------- */
+const MOTD_MAX = 5;
+let motdEditing = false;
+function motdItems(m = S.motd) {
+  if (!m) return [];
+  if (Array.isArray(m.items)) return m.items.filter(i => i && i.text);
+  return m.text ? [{id: "legacy", text: m.text, by: m.by, at: m.at, date: m.date}] : [];
+}
+function renderMotd() {
+  renderMotdAlert();
+  const box = $("#motd"), form = $("#motd-form"), leader = isLeader(), items = motdItems();
+  form.hidden = !motdEditing;
+  box.hidden = motdEditing || (!items.length && !leader);
+  if (box.hidden) return;
+  const list = $("#motd-list"); list.replaceChildren();
+  if (!items.length) list.append(h("li", {class: "empty-li"}, h("p", {class: "placeholder", text: "No messages yet. Post up to five to greet the team or share today's focus."})));
+  for (const it of items) {
+    const isNew = S.motdNew && it.by !== S.uid && it.at > (S.motdPrevSeen || 0);
+    list.append(h("li", {class: isNew ? "is-new-item" : null},
+      h("p", {text: it.text}),
+      h("small", {text: `${it.by === S.uid ? "You" : first(it.by)} · ${fmtDay(it.date)}`})));
+  }
+  const edit = $("#motd-edit");
+  edit.hidden = !leader;
+  edit.textContent = items.length ? "Edit messages" : "Post messages";
+}
+$("#motd-edit").addEventListener("click", () => {
+  motdEditing = true;
+  const items = motdItems();
+  for (let i = 0; i < MOTD_MAX; i++) $("#motd-in-" + i).value = (items[i] && items[i].text) || "";
+  $("#motd-clear").hidden = !items.length;
+  render();
+  setTimeout(() => $("#motd-in-0").focus(), 50);
+});
+$("#motd-cancel").addEventListener("click", () => { motdEditing = false; render(); });
+function saveMotd(doc, msg) {
+  motdEditing = false;
+  S.motd = doc; render();
+  enqueue("motd", () => S.db.doc("config/motd").set(doc)).then(() => toast(msg)).catch(() => {});
+}
+$("#motd-form").addEventListener("submit", e => {
+  e.preventDefault();
+  const old = motdItems(), now = Date.now(), items = [];
+  for (let i = 0; i < MOTD_MAX; i++) {
+    const text = $("#motd-in-" + i).value.trim();
+    if (!text) continue;
+    const prev = old.find(o => o.text === text);
+    items.push(prev ? prev : {id: uid6(), text, by: S.uid, at: now, date: todayStr()});
+  }
+  if (!items.length) return toast("Write at least one message, or choose Remove all.");
+  const added = items.some(i => i.at === now);
+  saveMotd({items, at: Math.max(...items.map(i => i.at || 0)), by: S.uid},
+    added ? "Posted. Your team will hear the chime." : "Messages updated.");
+});
+$("#motd-clear").addEventListener("click", () => saveMotd({items: [], at: 0, by: S.uid}, "All messages removed."));
+
+/* ---------- calendar ---------- */
+function renderCalendar() {
+  const [y, m] = S.calMonth.split("-").map(Number);
+  const firstDay = new Date(y, m - 1, 1);
+  $("#cal-title").textContent = firstDay.toLocaleDateString(undefined, {month: "long", year: "numeric"});
+  const grid = $("#cal-grid"); grid.replaceChildren();
+  const dows = []; for (let i = 0; i < 7; i++) { const d = new Date(2024, 0, 1 + i); dows.push(d.toLocaleDateString(undefined, {weekday: "short"})); }
+  dows.forEach(d => grid.append(h("div", {class: "dow", text: d})));
+  const start = new Date(firstDay); start.setDate(1 - ((firstDay.getDay() + 6) % 7));
+  const today = todayStr();
+  for (let i = 0; i < 42; i++) {
+    const d = new Date(start); d.setDate(start.getDate() + i);
+    const ds = ymd(d);
+    if (i === 35 && d.getMonth() !== m - 1) break;
+    const ents = awayOn(ds);
+    const cls = ["cell", d.getMonth() !== m - 1 && "out", ds === today && "today", ds === S.calSel && "sel", (d.getDay() === 0 || d.getDay() === 6) && "wkend"].filter(Boolean).join(" ");
+    grid.append(h("button", {class: cls, "aria-label": `${fmtLong(ds)}, ${ents.length} entries`, onclick: () => { S.calSel = ds; $("#cal-from").value = ds; if (!$("#cal-to").value || $("#cal-to").value < ds) $("#cal-to").value = ds; render(); }},
+      h("span", {class: "dn", text: d.getDate()}),
+      ents.slice(0, 3).map(e => h("span", {class: `bar t-${e.type}`, text: `${first(e.id)} · ${TYPES[e.type]}`})),
+      ents.length > 3 ? h("span", {class: "more", text: `+${ents.length - 3}`}) : null));
+  }
+  $("#day-detail-title").textContent = fmtLong(S.calSel);
+  const list = $("#day-entries"); list.replaceChildren();
+  const ents = awayOn(S.calSel);
+  if (!ents.length) list.append(h("li", {class: "empty", text: "Nobody has anything scheduled. Everyone is in."}));
+  for (const e of ents) {
+    list.append(h("li", {class: "entry"}, avatar(e.id),
+      h("div", {style: "min-width:0"},
+        h("div", null, h("span", {class: "nm", text: nameOf(e.id) + " "}), h("span", {class: `chip t-${e.type}`, text: TYPES[e.type]})),
+        h("p", {class: "mono", text: e.from === e.to ? fmtDay(e.from) : `${fmtDay(e.from)} – ${fmtDay(e.to)}`}),
+        e.note ? h("p", {text: e.note}) : null),
+      e.id === S.uid ? h("button", {class: "icon-btn", title: "Remove", "aria-label": "Remove entry", text: "×", onclick: () => removeCal(e.eid)}) : null));
+  }
+}
+function calItems() { return structuredClone(S.cal[S.uid] || {}); }
+function saveCal(items) {
+  const cutoff = addDays(todayStr(), -120);
+  for (const [k, e] of Object.entries(items)) if (e.to < cutoff) delete items[k];
+  S.cal[S.uid] = items; render();
+  return enqueue("cal", () => S.db.doc(`cal/${S.uid}`).set({items, updatedAt: Date.now()}));
+}
+function removeCal(eid) { const items = calItems(); delete items[eid]; saveCal(items).then(() => toast("Removed from the calendar.")).catch(() => {}); }
+$("#cal-form").addEventListener("submit", e => {
+  e.preventDefault();
+  const type = $("#cal-type").value, from = $("#cal-from").value, to = $("#cal-to").value || from, note = $("#cal-note").value.trim();
+  if (!from) return toast("Pick a start date.");
+  if (to < from) return toast("The end date is before the start date.");
+  const items = calItems(); items[uid6()] = {type, from, to, note};
+  $("#cal-note").value = "";
+  saveCal(items).then(() => toast(`Added: ${TYPES[type]}, ${from === to ? fmtDay(from) : fmtDay(from) + " – " + fmtDay(to)}.`)).catch(() => {});
+});
+const shiftMonth = n => { const [y, m] = S.calMonth.split("-").map(Number); const d = new Date(y, m - 1 + n, 1); S.calMonth = ymd(d).slice(0, 7); render(); };
+$("#cal-prev").onclick = () => shiftMonth(-1);
+$("#cal-next").onclick = () => shiftMonth(1);
+$("#cal-now").onclick = () => { S.calMonth = todayStr().slice(0, 7); S.calSel = todayStr(); render(); };
+
+/* ---------- chat ---------- */
+function threadIds() {
+  if (!S.members[S.uid]) return [];
+  if (isLeader()) return memberIds().filter(id => id !== S.uid);
+  return [S.uid];
+}
+function syncChats() {
+  if (!S.db || !S.signedInEver) return;
+  const want = new Set(threadIds());
+  for (const id of Object.keys(S.chatUnsubs)) if (!want.has(id)) { S.chatUnsubs[id](); delete S.chatUnsubs[id]; delete S.chats[id]; }
+  for (const id of want) if (!S.chatUnsubs[id]) {
+    S.chatUnsubs[id] = S.db.collection(`chat/${id}/msgs`).orderBy("ts", "desc").limit(200).onSnapshot(
+      snap => { S.chats[id] = snap.docs.map(d => ({id: d.id, ...d.data()})).reverse(); render(); },
+      () => { delete S.chatUnsubs[id]; });
+  }
+}
+function unreadIn(thread) {
+  const seen = S.readState[thread] || 0;
+  return (S.chats[thread] || []).filter(m => m.from !== S.uid && m.ts > seen).length;
+}
+const unreadTotal = () => threadIds().reduce((n, t) => n + unreadIn(t), 0);
+let readWriting = false;
+function markRead(thread) {
+  const msgs = S.chats[thread] || []; if (!msgs.length) return;
+  const last = msgs[msgs.length - 1].ts;
+  if ((S.readState[thread] || 0) >= last || readWriting) return;
+  S.readState = {...S.readState, [thread]: last};
+  readWriting = true;
+  S.db.doc(`data/users/${S.uid}/state`).set({read: S.readState}).catch(() => {}).finally(() => { readWriting = false; });
+}
+function renderChat() {
+  const chat = $("#chat"), leader = isLeader();
+  const threads = threadIds();
+  chat.classList.toggle("solo", !leader);
+  $("#chat-title").textContent = leader ? "Messages from your team" : "Chat with your team leader";
+  $("#chat-eyebrow").textContent = leader ? "You're the team leader" : "Messages";
+  if (leader && S.chatWith && !threads.includes(S.chatWith)) S.chatWith = null;
+  const active = leader ? S.chatWith : (S.leaderId ? S.uid : null);
+  chat.classList.toggle("has-thread", !!(leader && active));
+
+  const tl = $("#threads"); tl.replaceChildren(); tl.hidden = !leader;
+  if (leader) {
+    if (!threads.length) tl.append(h("div", {class: "empty", style: "margin:8px", text: "Teammates appear here once they join."}));
+    for (const id of threads) {
+      const msgs = S.chats[id] || [], last = msgs[msgs.length - 1], un = unreadIn(id);
+      tl.append(h("button", {class: "thread", "aria-current": String(id === active), onclick: () => { S.chatWith = id; render(); }},
+        avatar(id), h("div", {class: "tx"}, h("b", {text: nameOf(id)}), h("span", {text: last ? (last.from === S.uid ? "You: " : "") + last.text : (S.members[id].title || "No messages yet")})),
+        un ? h("span", {class: "badge", text: un}) : null));
+    }
+  }
+
+  const head = $("#conv-head"), box = $("#msgs"), form = $("#composer");
+  head.replaceChildren(); box.replaceChildren();
+  const other = leader ? active : S.leaderId;
+  if (!active || !other) {
+    form.hidden = true;
+    box.append(h("div", {class: "empty", style: "margin:auto", text: leader ? "Pick a teammate to open your conversation." : "Your team leader hasn't joined yet. Chat opens once they sign in."}));
+    return;
+  }
+  form.hidden = !!S.readOnly && !leader;
+  head.append(
+    leader ? h("button", {class: "icon-btn back", "aria-label": "Back to conversations", text: "‹", onclick: () => { S.chatWith = null; render(); }}) : null,
+    avatar(other), h("div", null, h("b", {text: nameOf(other)}), h("small", {text: leader ? (S.members[other]?.title || "Team member") : "Team leader · only you two can see this chat"})));
+  const msgs = S.chats[active] || [];
+  if (!msgs.length) box.append(h("div", {class: "empty", style: "margin:auto", text: leader ? `No messages with ${first(other)} yet. Say hello.` : "Ask a question, flag a blocker or share an update. Only your team leader sees this."}));
+  let lastDay = "";
+  for (const m of msgs) {
+    const day = ymd(new Date(m.ts));
+    if (day !== lastDay) { box.append(h("div", {class: "daysep", text: day === todayStr() ? "Today" : fmtDay(day)})); lastDay = day; }
+    box.append(h("div", {class: "msg" + (m.from === S.uid ? " mine" : "")}, m.text, h("time", {text: fmtTime(m.ts)})));
+  }
+  const nearBottom = box.dataset.thread !== active || true;
+  box.dataset.thread = active;
+  if (nearBottom) box.scrollTop = box.scrollHeight;
+  if (S.tab === "chat" && document.visibilityState === "visible") markRead(active);
+}
+$("#composer").addEventListener("submit", async e => {
+  e.preventDefault();
+  const inp = $("#msg-input"), text = inp.value.trim(); if (!text) return;
+  const thread = isLeader() ? S.chatWith : S.uid; if (!thread) return;
+  inp.value = "";
+  try { await S.db.collection(`chat/${thread}/msgs`).add({from: S.uid, text, ts: Date.now()}); }
+  catch (err) { inp.value = text; toast(errMsg(err)); }
+});
+$("#msg-input").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("#composer").requestSubmit(); } });
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && S.signedIn) render(); });
+
+/* ---------- team ---------- */
+let confirmRemove = null;
+function renderTeam() {
+  const ids = memberIds();
+  $("#team-seats").textContent = `${ids.length} of ${MAX_SEATS} seats`;
+  const grid = $("#team-grid"); grid.replaceChildren();
+  const today = todayStr();
+  for (const id of ids) {
+    const m = S.members[id], list = tasksFor(id, today), done = list.filter(t => t.s === "done").length;
+    const a = awayOn(today).find(x => x.id === id);
+    const upcoming = Object.values(S.cal[id] || {}).filter(e => e.from > today).sort((x, y) => x.from < y.from ? -1 : 1)[0];
+    const card = h("div", {class: "card"},
+      h("div", {class: "row"}, avatar(id, "av lg"), h("div", {style: "min-width:0"},
+        id === S.leaderId ? h("div", {class: "lead-tag", text: "Team leader"}) : null,
+        h("b", {text: nameOf(id) + (id === S.uid ? " (you)" : "")}), h("span", {class: "muted", text: m.title || "Team member"}))),
+      h("div", {class: "kv"}, h("span", {text: "Today"}), a ? h("span", {class: `chip t-${a.type}`, text: TYPES[a.type]}) : h("span", {text: "In"})),
+      h("div", {class: "kv"}, h("span", {text: "Tasks today"}), h("span", {class: "mono", text: `${done} of ${list.length} done`})),
+      h("div", {class: "kv"}, h("span", {text: "Next away"}), h("span", {text: upcoming ? `${TYPES[upcoming.type]}, ${fmtDay(upcoming.from)}` : "Nothing planned"})));
+    if (isLeader() && id !== S.uid) {
+      if (confirmRemove === id) card.append(h("div", {class: "confirm"}, h("span", {text: `Remove ${first(id)} and free their seat?`}),
+        h("button", {class: "btn danger", text: "Remove", onclick: async () => { confirmRemove = null; try { await S.db.doc(`members/${id}`).delete(); toast("Removed from the team."); } catch (e) { toast(errMsg(e)); } }}),
+        h("button", {class: "btn ghost", text: "Cancel", onclick: () => { confirmRemove = null; render(); }})));
+      else card.append(h("button", {class: "btn ghost danger", style: "justify-self:start", text: "Remove from team", onclick: () => { confirmRemove = id; render(); }}));
+    }
+    grid.append(card);
+  }
+  for (let i = ids.length; i < MAX_SEATS; i++) grid.append(h("div", {class: "card open"}, h("div", null, h("b", {text: "Open seat"}), h("div", {class: "note", text: "Share this app with a teammate as a Contributor. They join from the sign-in page."}))));
+  const ti = $("#title-input");
+  if (document.activeElement !== ti) ti.value = S.members[S.uid]?.title || "";
+}
+$("#title-form").addEventListener("submit", e => {
+  e.preventDefault();
+  const m = S.members[S.uid]; if (!m) return;
+  const title = $("#title-input").value.trim() || "Team member";
+  enqueue("member", () => S.db.doc(`members/${S.uid}`).set({...m, title})).then(() => toast("Profile saved.")).catch(() => {});
+});
+
+/* ---------- boot ---------- */
+async function boot() {
+  const claude = window.claude;
+  if (!claude || !claude.use) { S.booted = true; render(); return; }
+  const [db, user] = await Promise.all([claude.use("db"), claude.use("user")]);
+  S.db = db; S.user = user;
+  if (user) {
+    S.me = await user.me(); S.uid = S.me.id; S.isOwner = S.me.isOwner;
+    const w = await user.can("data.write"); S.readOnly = w === false;
+  }
+  S.booted = true;
+  if (!db || !S.uid) { render(); return; }
+  S.signedInEver = true;
+  const onErr = () => {};
+  db.collection("members").onSnapshot(snap => {
+    const m = {}; snap.docs.forEach(d => m[d.id] = d.data()); S.members = m; S.membersLoaded = true;
+    if (S.signedIn === false && store.get("huddle.signedIn") === S.uid && m[S.uid] && !S.autoTried) { S.autoTried = true; enter(); }
+    S.autoTried = true;
+    syncChats(); render();
+  }, onErr);
+  db.doc("config/team").onSnapshot(snap => { S.leaderId = snap.exists ? snap.data().leaderId : null; syncChats(); render(); }, onErr);
+  db.doc("config/motd").onSnapshot(snap => { S.motd = snap.exists ? snap.data() : null; render(); }, onErr);
+  db.collection("tasks").onSnapshot(snap => { const t = {}; snap.docs.forEach(d => t[d.id] = d.data().items || {}); S.tasks = t; render(); }, onErr);
+  db.collection("cal").onSnapshot(snap => {
+    const c = {}; snap.docs.forEach(d => { const items = d.data().items || {}; c[d.id] = Object.fromEntries(Object.entries(items).map(([k, v]) => [k, {...v, eid: k}])); });
+    S.cal = c; render();
+  }, onErr);
+  db.doc(`data/users/${S.uid}/state`).onSnapshot(snap => {
+    if (snap.exists && !readWriting) { const r = snap.data().read || {}; for (const [k, v] of Object.entries(r)) if ((S.readState[k] || 0) < v) S.readState[k] = v; render(); }
+  }, onErr);
+  render();
+}
+$("#cal-from").value = S.calSel; $("#cal-to").value = S.calSel;
+render();
+boot().catch(() => { S.booted = true; render(); });
+})();
+</script>
